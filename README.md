@@ -143,7 +143,7 @@ MIT License
 
 ## 作者
 
-- GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+- GitHub: [@YOUR_USERNAME](https://github.com/dende256
 
 ## 関連プロジェクト
 
