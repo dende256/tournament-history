@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .detail-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .tournament-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #66a6ff;
+    }
+    
+    .tournament-header h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .meta-info {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        color: #7f8c8d;
+        font-size: 0.95em;
+    }
+    
+    .meta-info span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .podium-section {
+        margin: 30px 0;
+    }
+    
+    .podium-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .podium {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 10px;
+        margin: 30px 0;
+        min-height: 250px;
+    }
+    
+    .podium-place {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.3s;
+    }
+    
+    .podium-place:hover {
+        transform: translateY(-10px);
+    }
+    
+    .podium-stand {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px 8px 0 0;
+        padding: 20px;
+        text-align: center;
+        min-width: 150px;
+        position: relative;
+    }
+    
+    .podium-place.first .podium-stand {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        height: 180px;
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+    }
+    
+    .podium-place.second .podium-stand {
+        background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
+        height: 140px;
+        box-shadow: 0 6px 15px rgba(192, 192, 192, 0.4);
+    }
+    
+    .podium-place.third .podium-stand {
+        background: linear-gradient(135deg, #CD7F32 0%, #B8732C 100%);
+        height: 100px;
+        box-shadow: 0 4px 10px rgba(205, 127, 50, 0.4);
+    }
+    
+    .podium-medal {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+    
+    .podium-rank {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 10px;
+    }
+    
+    .podium-name {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: white;
+        word-break: break-word;
+    }
+    
+    .description-section {
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .description-section h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .youtube-section {
+        margin: 30px 0;
+    }
+    
+    .youtube-section h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    
+    .youtube-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .youtube-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    .bracket-section {
+        margin: 30px 0;
+    }
+    
+    .bracket-section h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    
+    .bracket-image {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    
+    .bracket-image:hover {
+        transform: scale(1.02);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+    
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    /* Image modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        padding: 20px;
+    }
+    
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        max-width: 95%;
+        max-height: 95%;
+        object-fit: contain;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+        color: #66a6ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="tournament-header">
+        <h1>{{ tournament.tournament_name }}</h1>
+        <div class="meta-info">
+            <span>📅 {{ tournament.date }}</span>
+            <span>👤 主催: {{ tournament.organizer }}</span>
+        </div>
+    </div>
+    
+    <div class="podium-section">
+        <h2>🏆 入賞者</h2>
+        <div class="podium">
+            <!-- 2nd place -->
+            <div class="podium-place second">
+                <div class="podium-medal">🥈</div>
+                <div class="podium-stand">
+                    <div class="podium-rank">2位</div>
+                    <div class="podium-name">{{ tournament.second_place if tournament.second_place else '-' }}</div>
+                </div>
+            </div>
+            
+            <!-- 1st place -->
+            <div class="podium-place first">
+                <div class="podium-medal">🥇</div>
+                <div class="podium-stand">
+                    <div class="podium-rank">1位</div>
+                    <div class="podium-name">{{ tournament.first_place }}</div>
+                </div>
+            </div>
+            
+            <!-- 3rd place -->
+            <div class="podium-place third">
+                <div class="podium-medal">🥉</div>
+                <div class="podium-stand">
+                    <div class="podium-rank">3位</div>
+                    <div class="podium-name">{{ tournament.third_place if tournament.third_place else '-' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if tournament.description %}
+    <div class="description-section">
+        <h3>📝 大会詳細</h3>
+        <p>{{ tournament.description }}</p>
+    </div>
+    {% endif %}
+    
+    {% if tournament.youtube_url %}
+    <div class="youtube-section">
+        <h3>🎥 動画</h3>
+        <div class="youtube-container">
+            <iframe src="{{ tournament.youtube_embed_url }}" 
+                allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+        </div>
+    </div> 
+    {% endif %}
+
+    {% if tournament.bracket_image %}
+    <div class="bracket-section">
+        <h3>📊 トーナメント表</h3>
+        <img src="{{ url_for('static', filename='../uploads/' + tournament.bracket_image) }}" 
+             alt="トーナメント表" 
+             class="bracket-image"
+             id="bracketImage">
+    </div>
+    {% endif %}
+    
+    <div class="action-buttons">
+        <a href="/tournament/" class="btn btn-secondary">← 一覧に戻る</a>
+        <a href="/tournament/edit/{{ tournament.id }}" class="btn">✏️ 編集</a>
+        <button onclick="deleteTournament('{{ tournament.id }}')" class="btn" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+            🗑️ 削除
+        </button>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+// Image modal
+const bracketImage = document.getElementById('bracketImage');
+const modal = document.getElementById('imageModal');
+const modalImg = document.getElementById('modalImage');
+
+if (bracketImage) {
+    bracketImage.onclick = function() {
+        modal.classList.add('show');
+        modalImg.src = this.src;
+    }
+}
+
+function closeModal() {
+    modal.classList.remove('show');
+}
+
+// Close modal on click outside image
+modal.onclick = function(event) {
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+
+// Delete tournament
+function deleteTournament(id) {
+    if (!confirm('本当にこの大会を削除しますか？\nこの操作は取り消せません。')) {
+        return;
+    }
+    
+    fetch(`/tournament/delete/${id}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('大会を削除しました');
+            window.location.href = '/tournament/';
+        } else {
+            alert('エラー: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('削除に失敗しました: ' + error);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .tournaments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .tournament-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 5px solid #66a6ff;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    
+    .tournament-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .tournament-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .tournament-date {
+        color: #7f8c8d;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+    }
+    
+    .tournament-organizer {
+        color: #95a5a6;
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+    
+    .tournament-winners {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+    
+    .winner-item {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        font-size: 0.95em;
+    }
+    
+    .winner-medal {
+        font-size: 1.2em;
+        margin-right: 8px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: white;
+    }
+    
+    .empty-state-icon {
+        font-size: 4em;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state-text {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if tournaments %}
+        <h2 style="margin-bottom: 20px;">登録済み大会 ({{ tournaments|length }}件)</h2>
+        <div class="tournaments-grid">
+            {% for tournament in tournaments %}
+            <div class="tournament-card" onclick="window.location.href='/tournament/{{ tournament.id }}'">
+                <div class="tournament-title">{{ tournament.tournament_name }}</div>
+                <div class="tournament-date">📅 {{ tournament.date }}</div>
+                <div class="tournament-organizer">🏢 主催: {{ tournament.organizer }}</div>
+                
+                <div class="tournament-winners">
+                    <div class="winner-item">
+                        <span class="winner-medal">🥇</span>
+                        <strong>{{ tournament.first_place }}</strong>
+                    </div>
+                    {% if tournament.second_place %}
+                    <div class="winner-item">
+                        <span class="winner-medal">🥈</span>
+                        {{ tournament.second_place }}
+                    </div>
+                    {% endif %}
+                    {% if tournament.third_place %}
+                    <div class="winner-item">
+                        <span class="winner-medal">🥉</span>
+                        {{ tournament.third_place }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-text">まだ大会が登録されていません</div>
+            <a href="/tournament/add" class="btn">最初の大会を登録する</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
