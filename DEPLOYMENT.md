@@ -272,6 +272,32 @@ python app.py  # 手動で起動してエラーを確認
 
 ### 404 Not Found
 
+**症状: 一覧ページは表示されるが、詳細ページで404エラー**
+
+原因: Flask routingとNginx設定の不整合
+
+解決方法:
+1. `app.py` のルーティングを確認
+```bash
+grep "@app.route" app.py
+# 出力: @app.route('/<tournament_id>')  ← これが正しい
+```
+
+2. Nginx設定を確認
+```bash
+sudo nginx -T | grep -A 10 "location /tournament"
+# proxy_pass に trailing slash (/) があることを確認
+```
+
+3. Gunicornのキャッシュをクリア
+```bash
+sudo supervisorctl stop tournament-app
+sudo supervisorctl start tournament-app
+# restart ではなく stop → start を実行
+```
+
+**症状: 全てのページで404エラー**
+
 1. Nginx設定を確認
 ```bash
 sudo nginx -T | grep -A 10 "location /tournament"
@@ -282,6 +308,26 @@ sudo nginx -T | grep -A 10 "location /tournament"
 3. Nginxを再起動
 ```bash
 sudo systemctl restart nginx
+```
+
+### YouTube動画が表示されない
+
+1. URLフォーマットが正しいか確認
+```bash
+# 対応形式:
+# https://www.youtube.com/watch?v=VIDEO_ID
+# https://www.youtube.com/live/VIDEO_ID
+# https://youtu.be/VIDEO_ID
+```
+
+2. データに保存されているか確認
+```bash
+cat data/tournaments.json | grep youtube_url
+```
+
+3. テンプレートが最新版か確認
+```bash
+grep "youtube_embed_url" templates/tournament_detail.html
 ```
 
 ### 画像がアップロードできない
@@ -332,7 +378,37 @@ git pull origin main
 pip install -r requirements.txt --upgrade
 
 # アプリケーションを再起動
-sudo supervisorctl restart tournament-app
+sudo supervisorctl stop tournament-app
+sudo supervisorctl start tournament-app
+
+# 注意: restart コマンドではなく stop → start を使用
+# Gunicornのコードキャッシュをクリアするため
+```
+
+### 主要な更新内容
+
+#### v1.1.0 (2025-12-05) - YouTube動画埋め込み機能
+
+**追加されたファイル:**
+- `templates/tournament_detail.html` の更新（YouTube埋め込みセクション）
+
+**変更されたファイル:**
+- `app.py`: `convert_youtube_url()` 関数の追加
+- `templates/add_tournament.html`: YouTube URL入力フィールド追加
+- `templates/edit_tournament.html`: YouTube URL入力フィールド追加
+
+**Flask routing重要な変更:**
+- `@app.route('/tournament/<id>')` → `@app.route('/<id>')`
+- Nginxの `proxy_pass http://127.0.0.1:8001/;` (trailing slash) に対応
+- リダイレクトURLを `url_for()` から絶対パス `f"/tournament/{id}"` に変更
+
+**更新後の確認:**
+```bash
+# Flaskアプリが正常に動作しているか確認
+curl -I http://127.0.0.1:8001/
+
+# YouTube機能が動作するか確認（大会詳細ページ）
+curl http://127.0.0.1:8001/<tournament-id> | grep youtube
 ```
 
 ## セキュリティ推奨事項
