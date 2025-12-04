@@ -15,8 +15,8 @@ Tournament History Management System を本番環境（VPS）にデプロイす�
 - OS: Debian
 - Python: 3.11
 - サーバー: ConoHa VPS
-- ドメイン: 3tbon.vf2.onl
-- アプリURL: https://3tbon.vf2.onl/tournament/
+- ドメイン: your-domain.example.com
+- アプリURL: https://your-domain.example.com/tournament/
 
 ## デプロイ手順
 
