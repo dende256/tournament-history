@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .form-group label .required {
+        color: #e74c3c;
+        margin-left: 3px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1em;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #66a6ff;
+    }
+    
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .file-upload {
+        border: 3px dashed #66a6ff;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #e3f9ff;
+    }
+    
+    .file-upload:hover {
+        border-color: #89f7fe;
+        background: #d4efff;
+    }
+    
+    .file-upload input {
+        display: none;
+    }
+    
+    .upload-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #66a6ff;
+    }
+    
+    .current-image {
+        max-width: 300px;
+        border-radius: 10px;
+        margin: 10px 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .loading.show {
+        display: block;
+    }
+    
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #66a6ff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="margin-bottom: 30px; color: #2c3e50;">✏️ 大会情報編集</h2>
+    
+    <form id="tournamentForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="tournament_name">大会名<span class="required">*</span></label>
+            <input type="text" id="tournament_name" name="tournament_name" required 
+                   value="{{ tournament.tournament_name }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="date">開催日<span class="required">*</span></label>
+            <input type="date" id="date" name="date" required 
+                   value="{{ tournament.date }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="organizer">主催者<span class="required">*</span></label>
+            <input type="text" id="organizer" name="organizer" required 
+                   value="{{ tournament.organizer }}">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="first_place">1位<span class="required">*</span></label>
+                <input type="text" id="first_place" name="first_place" required 
+                       value="{{ tournament.first_place }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="second_place">2位</label>
+                <input type="text" id="second_place" name="second_place" 
+                       value="{{ tournament.second_place if tournament.second_place else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="third_place">3位</label>
+                <input type="text" id="third_place" name="third_place" 
+                       value="{{ tournament.third_place if tournament.third_place else '' }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">大会詳細</label>
+            <textarea id="description" name="description">{{ tournament.description if tournament.description else '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>トーナメント表画像</label>
+            {% if tournament.bracket_image %}
+            <p style="color: #7f8c8d; margin-bottom: 10px;">現在の画像:</p>
+            <img src="{{ url_for('static', filename='../uploads/' + tournament.bracket_image) }}" 
+                 alt="現在のトーナメント表" 
+                 class="current-image">
+            <p style="color: #7f8c8d; margin: 10px 0;">新しい画像をアップロードすると置き換わります</p>
+            {% endif %}
+            <div class="file-upload" id="fileUpload">
+                <div class="upload-icon">📊</div>
+                <p><strong>クリックして新しい画像を選択</strong></p>
+                <p style="color: #666; font-size: 0.9em; margin-top: 5px;">
+                    PNG, JPG, GIF (最大16MB)
+                </p>
+                <p id="fileName" style="color: #66a6ff; font-weight: bold; margin-top: 10px;"></p>
+                <input type="file" id="bracket_image" name="bracket_image" accept="image/*">
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn">💾 更新</button>
+            <a href="/tournament/{{ tournament.id }}" class="btn btn-secondary">キャンセル</a>
+        </div>
+    </form>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>更新中...</p>
+    </div>
+    
+    <div class="error" id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const fileUpload = document.getElementById('fileUpload');
+    const fileInput = document.getElementById('bracket_image');
+    const fileName = document.getElementById('fileName');
+    const form = document.getElementById('tournamentForm');
+    const loading = document.getElementById('loading');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+    
+    fileUpload.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileName.textContent = `選択済み: ${e.target.files[0].name}`;
+        }
+    });
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        errorMsg.classList.remove('show');
+        successMsg.classList.remove('show');
+        loading.classList.add('show');
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch('/edit/{{ tournament.id }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                successMsg.textContent = '✓ 大会情報を更新しました！';
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1000);
+            } else {
+                throw new Error(data.error || '更新に失敗しました');
+            }
+        } catch (error) {
+            errorMsg.textContent = `✗ ${error.message}`;
+            errorMsg.classList.add('show');
+        } finally {
+            loading.classList.remove('show');
+        }
+    });
+</script>
+{% endblock %}
