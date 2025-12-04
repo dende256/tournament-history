@@ -424,7 +424,7 @@ sudo ufw enable
 2. **定期的なバックアップ**
 ```bash
 # データのバックアップ
-tar -czf tournament-backup-$(date +%Y%m%d).tar.gz /home/ike/tournament/data /home/ike/tournament/uploads
+tar -czf tournament-backup-$(date +%Y%m%d).tar.gz /home/xxx/tournament/data /home/xxx/tournament/uploads
 ```
 
 3. **SSL証明書の自動更新確認**
