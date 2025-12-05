@@ -271,15 +271,17 @@
     </div>
     {% endif %}
     
-    {% if tournament.youtube_url %}
+    {% if tournament.youtube_embed_urls %}
     <div class="youtube-section">
         <h3>🎥 動画</h3>
-        <div class="youtube-container">
-            <iframe src="{{ tournament.youtube_embed_url }}" 
+        {% for youtube_url in tournament.youtube_embed_urls %}
+        <div class="youtube-container" style="margin-bottom: 20px;">
+            <iframe src="{{ youtube_url }}" 
                 allowfullscreen
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
             </iframe>
         </div>
+        {% endfor %}
     </div> 
     {% endif %}
 

@@ -152,8 +152,32 @@
         </div>
 
         <div class="form-group">
-            <label for="youtube_url">YouTube動画URL</label>
-            <input type="url" id="youtube_url" name="youtube_url" 
+            <label for="youtube_url_1">YouTube動画URL 1</label>
+            <input type="url" id="youtube_url_1" name="youtube_url_1" 
+                   placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div class="form-group">
+            <label for="youtube_url_2">YouTube動画URL 2</label>
+            <input type="url" id="youtube_url_2" name="youtube_url_2" 
+                   placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div class="form-group">
+            <label for="youtube_url_3">YouTube動画URL 3</label>
+            <input type="url" id="youtube_url_3" name="youtube_url_3" 
+                   placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div class="form-group">
+            <label for="youtube_url_4">YouTube動画URL 4</label>
+            <input type="url" id="youtube_url_4" name="youtube_url_4" 
+                   placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div class="form-group">
+            <label for="youtube_url_5">YouTube動画URL 5</label>
+            <input type="url" id="youtube_url_5" name="youtube_url_5" 
                    placeholder="https://www.youtube.com/watch?v=...">
         </div>
         
@@ -214,7 +238,7 @@
         const formData = new FormData(form);
         
         try {
-            const response = await fetch('/tournament/add', {
+            const response = await fetch('add', {
                 method: 'POST',
                 body: formData
             });

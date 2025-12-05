@@ -93,8 +93,13 @@ def view_tournament(tournament_id):
     if not tournament:
         return "大会が見つかりません", 404
     
-    if tournament.get('youtube_url'):
-        tournament['youtube_embed_url'] = convert_youtube_url(tournament['youtube_url'])
+    # Convert multiple YouTube URLs
+    youtube_embed_urls = []
+    for i in range(1, 6):
+        url = tournament.get(f'youtube_url_{i}', '')
+        if url:
+            youtube_embed_urls.append(convert_youtube_url(url))
+    tournament['youtube_embed_urls'] = youtube_embed_urls
     
     return render_template('tournament_detail.html', tournament=tournament)
 
@@ -115,7 +120,11 @@ def add_tournament():
         second_place = request.form.get('second_place', '').strip()
         third_place = request.form.get('third_place', '').strip()
         description = request.form.get('description', '').strip()
-        youtube_url = request.form.get('youtube_url', '').strip()
+        youtube_url_1 = request.form.get('youtube_url_1', '').strip()
+        youtube_url_2 = request.form.get('youtube_url_2', '').strip()
+        youtube_url_3 = request.form.get('youtube_url_3', '').strip()
+        youtube_url_4 = request.form.get('youtube_url_4', '').strip()
+        youtube_url_5 = request.form.get('youtube_url_5', '').strip()
         
         # Validate required fields
         if not all([tournament_name, date, organizer, first_place]):
@@ -146,7 +155,11 @@ def add_tournament():
             'third_place': third_place,
             'description': description,
             'bracket_image': bracket_image,
-            'youtube_url': youtube_url,
+            'youtube_url_1': youtube_url_1,
+            'youtube_url_2': youtube_url_2,
+            'youtube_url_3': youtube_url_3,
+            'youtube_url_4': youtube_url_4,
+            'youtube_url_5': youtube_url_5,
             'created_at': datetime.now().isoformat()
         }
         
@@ -187,7 +200,11 @@ def edit_tournament(tournament_id):
         tournament['second_place'] = request.form.get('second_place', '').strip()
         tournament['third_place'] = request.form.get('third_place', '').strip()
         tournament['description'] = request.form.get('description', '').strip()
-        tournament['youtube_url'] = request.form.get('youtube_url', '').strip()
+        tournament['youtube_url_1'] = request.form.get('youtube_url_1', '').strip()
+        tournament['youtube_url_2'] = request.form.get('youtube_url_2', '').strip()
+        tournament['youtube_url_3'] = request.form.get('youtube_url_3', '').strip()
+        tournament['youtube_url_4'] = request.form.get('youtube_url_4', '').strip()
+        tournament['youtube_url_5'] = request.form.get('youtube_url_5', '').strip()
         
         # Handle new image upload
         if 'bracket_image' in request.files:
