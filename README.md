@@ -150,6 +150,24 @@ gunicorn -c gunicorn_config.py app:app
 
 ## 更新履歴
 
+### v1.2.0 (2025-12-05)
+
+**複数YouTube動画対応**
+
+- **新機能**:
+  - 1つの大会に最大5つのYouTube動画URLを登録可能に拡張
+  - 詳細ページで複数の動画を縦に並べて表示
+
+- **技術的変更**:
+  - データモデル変更: `youtube_url` → `youtube_url_1` ~ `youtube_url_5`
+  - `view_tournament()` で複数URLの変換処理に対応
+  - `add_tournament.html` に5個のURL入力欄を追加
+  - `edit_tournament.html` に5個のURL入力欄を追加（既存値表示対応）
+  - `tournament_detail.html` でループ処理による複数動画表示
+
+- **互換性**:
+  - 既存データ（`youtube_url`のみ）との下位互換性を維持
+
 ### v1.1.0 (2025-12-05)
 
 **YouTube動画埋め込み機能の追加**
