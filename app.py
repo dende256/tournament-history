@@ -16,10 +16,17 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['DATA_FOLDER'] = 'data'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+# Base path for routing (empty for local, '/tournament' for VPS)
+app.config['BASE_PATH'] = os.environ.get('BASE_PATH', '')
 
 # Ensure folders exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['DATA_FOLDER'], exist_ok=True)
+
+# Make BASE_PATH available in all templates
+@app.context_processor
+def inject_base_path():
+    return {'base_path': app.config['BASE_PATH']}
 
 
 def allowed_file(filename):

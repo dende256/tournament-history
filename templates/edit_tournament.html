@@ -257,7 +257,7 @@
         const formData = new FormData(form);
         
         try {
-            const response = await fetch('edit/{{ tournament.id }}', {
+            const response = await fetch('{{ base_path }}/edit/{{ tournament.id }}', {
                 method: 'POST',
                 body: formData
             });

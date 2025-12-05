@@ -238,7 +238,7 @@
         const formData = new FormData(form);
         
         try {
-            const response = await fetch('add', {
+            const response = await fetch('{{ base_path }}/add', {
                 method: 'POST',
                 body: formData
             });
