@@ -197,7 +197,7 @@
             <label>トーナメント表画像</label>
             {% if tournament.bracket_image %}
             <p style="color: #7f8c8d; margin-bottom: 10px;">現在の画像:</p>
-            <img src="{{ url_for('static', filename='../uploads/' + tournament.bracket_image) }}" 
+            <img src="{{ base_path }}/uploads/{{ tournament.bracket_image }}" 
                  alt="現在のトーナメント表" 
                  class="current-image">
             <p style="color: #7f8c8d; margin: 10px 0;">新しい画像をアップロードすると置き換わります</p>

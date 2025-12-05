@@ -29,6 +29,14 @@ def inject_base_path():
     return {'base_path': app.config['BASE_PATH']}
 
 
+# Serve uploaded files
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """Serve uploaded files"""
+    from flask import send_from_directory
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and \

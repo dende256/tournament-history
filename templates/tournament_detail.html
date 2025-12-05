@@ -288,7 +288,7 @@
     {% if tournament.bracket_image %}
     <div class="bracket-section">
         <h3>📊 トーナメント表</h3>
-        <img src="{{ url_for('static', filename='../uploads/' + tournament.bracket_image) }}" 
+        <img src="{{ base_path }}/uploads/{{ tournament.bracket_image }}" 
              alt="トーナメント表" 
              class="bracket-image"
              id="bracketImage">
