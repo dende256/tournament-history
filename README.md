@@ -150,6 +150,29 @@ gunicorn -c gunicorn_config.py app:app
 
 ## 更新履歴
 
+### v1.2.1 (2025-12-05)
+
+**環境別設定の導入**
+
+- **新機能**:
+  - `BASE_PATH` 環境変数による環境別ルーティング対応
+  - ローカル環境とVPS環境で同一コードが動作可能に
+
+- **技術的変更**:
+  - `app.config['BASE_PATH']` の追加（デフォルト: 空文字列）
+  - `@app.context_processor` で全テンプレートに `base_path` 変数を注入
+  - `add_tournament.html` および `edit_tournament.html` のfetch URLを動的生成に変更
+  - VPS環境用のSupervisor設定に `environment=BASE_PATH="/tournament"` を追加
+
+- **ドキュメント**:
+  - `ENVIRONMENT_SETUP.md` を追加（環境別設定ガイド）
+  - ローカル/VPS環境でのセットアップ手順を明記
+
+- **利点**:
+  - デプロイ時の手動修正が不要に
+  - 開発環境と本番環境の一貫性を確保
+  - 環境変数による柔軟な設定管理
+
 ### v1.2.0 (2025-12-05)
 
 **複数YouTube動画対応**
