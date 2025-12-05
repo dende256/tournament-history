@@ -39,6 +39,9 @@ tournament/
 ├── gunicorn_config.py       # Gunicorn設定
 ├── README.md                # このファイル
 ├── DEPLOYMENT.md            # デプロイ手順書
+├── ENVIRONMENT_SETUP.md     # 環境別設定ガイド
+├── BACKUP.md                # WSLバックアップガイド
+├── VPS_BACKUP.md            # VPSバックアップガイド
 ├── templates/               # HTMLテンプレート
 │   ├── base.html           # ベーステンプレート
 │   ├── index.html          # 大会一覧
