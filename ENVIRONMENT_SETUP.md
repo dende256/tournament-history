@@ -97,6 +97,26 @@ python app.py
 
 ## 技術詳細
 
+### gunicorn_config.py
+
+```python
+import os
+
+bind = "127.0.0.1:8001"
+workers = 2
+worker_class = "sync"
+timeout = 120
+
+# VPS環境用のBASE_PATH設定
+# ローカル環境では空文字列として動作する
+os.environ['BASE_PATH'] = '/tournament'
+```
+
+**注意**: 
+- WSL(ローカル)環境でもVPS環境でも同じファイルを使用
+- ローカルでは `app.config['BASE_PATH']` がこの値を上書き可能
+- VPS環境ではSupervisorの `environment` 設定と組み合わせて使用
+
 ### app.py
 
 ```python

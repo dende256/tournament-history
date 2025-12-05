@@ -150,6 +150,19 @@ gunicorn -c gunicorn_config.py app:app
 
 ## 更新履歴
 
+### v1.2.2 (2025-12-05)
+
+**環境設定の統一**
+
+- **環境設定の改善**:
+  - `gunicorn_config.py` に `BASE_PATH` 環境変数設定を追加
+  - WSL環境とVPS環境で完全に同一のファイル構成を実現
+  - `import os` および `os.environ['BASE_PATH'] = '/tournament'` を追加
+
+- **ドキュメント更新**:
+  - `ENVIRONMENT_SETUP.md` に `gunicorn_config.py` の説明を追加
+  - 環境間の設定優先順位を明確化（Supervisor > gunicorn_config.py > デフォルト）
+
 ### v1.2.1 (2025-12-05)
 
 **環境別設定の導入**
